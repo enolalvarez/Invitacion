@@ -128,9 +128,17 @@ input:focus, select:focus { outline: none; border-bottom: 2px solid #D4AF37; }
   </div>
 
   <div class="final-message" id="thanksMessage">
-    <h1>¡Gracias, <span id="userNameDisplay"></span>! 💍</h1>
-    <p>Tu respuesta ha sido enviada correctamente.</p>
-  </div>
+    <div id="msgSi" style="display: none;">
+        <h1>¡Gracias, <span id="userNameDisplaySi"></span>! 💍</h1>
+        <p>Tu respuesta ha sido enviada correctamente.</p>
+        <p>Nos hace mucha ilusión compartir este día contigo.</p>
+    </div>
+
+    <div id="msgNo" style="display: none;">
+        <h1>¡Oh, qué pena <span id="userNameDisplayNo"></span>! 😔</h1>
+        <p>Sentimos mucho que no puedas acompañarnos.</p>
+        <p>Te echaremos de menos, pero gracias por avisarnos.</p>
+    </div>
 </div>
 
 <script>
@@ -154,18 +162,32 @@ asistenciaSelect.addEventListener('change', function() {
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-  const nombreCompleto = form.nombre.value.trim();
-  document.getElementById('userNameDisplay').innerText = nombreCompleto.split(' ')[0];
   
+  const nombreCompleto = form.nombre.value.trim();
+  const primerNombre = nombreCompleto.split(' ')[0];
+  const asistencia = asistenciaSelect.value; // Guardamos si dijo Sí o No
+
+  // Preparamos los textos antes de enviar
+  document.getElementById('userNameDisplaySi').innerText = primerNombre;
+  document.getElementById('userNameDisplayNo').innerText = primerNombre;
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerText = "Enviando...";
 
   fetch(scriptURL, { method: 'POST', body: new FormData(form), mode: 'no-cors' })
   .then(() => {
-    if(typeof confetti === 'function') lanzarConfeti();
-    document.getElementById('card').style.display = 'none';
-    document.getElementById('thanksMessage').style.display = 'block';
+    card.style.display = 'none';
+    thanks.style.display = 'block';
+
+    // Lógica para mostrar un mensaje u otro
+    if (asistencia === 'Sí') {
+        document.getElementById('msgSi').style.display = 'block';
+        if(typeof confetti === 'function') lanzarConfeti(); // Solo confeti si viene
+    } else {
+        document.getElementById('msgNo').style.display = 'block';
+        // Aquí no lanzamos confeti porque sería un poco raro celebrar que no viene, ¿no? :)
+    }
   })
   .catch(error => {
     alert("Error al enviar. Inténtalo de nuevo.");
