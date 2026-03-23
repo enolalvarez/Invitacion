@@ -219,22 +219,28 @@ const btn = document.getElementById('submitBtn');
 const asistenciaSelect = document.getElementById('asistenciaSelect');
 const extraFields = document.getElementById('extraFields');
 
-// Lógica para mostrar/ocultar campos extras
+// Lógica para mostrar/ocultar campos con transición suave
 asistenciaSelect.addEventListener('change', function() {
     if (this.value === 'Sí') {
+        // Primero lo ponemos en block pero invisible y sin altura
         extraFields.style.display = 'block';
+        extraFields.style.maxHeight = '0px';
+        extraFields.style.opacity = '0';
+        extraFields.style.transition = 'all 0.6s ease'; // Aquí controlas la velocidad (0.6 segundos)
+        
+        // Un pequeño retraso para que el navegador note el cambio y anime
+        setTimeout(() => {
+            extraFields.style.maxHeight = '200px'; // Altura suficiente para los campos
+            extraFields.style.opacity = '1';
+        }, 10);
     } else {
-        extraFields.style.display = 'none';
-        // Opcional: limpiar los campos si elige "No" después de haber puesto algo
-        extraFields.querySelectorAll('input').forEach(input => input.value = '');
+        // Cuando eligen "No", lo ocultamos
+        extraFields.style.maxHeight = '0px';
+        extraFields.style.opacity = '0';
+        setTimeout(() => {
+            extraFields.style.display = 'none';
+        }, 600); // Espera a que termine la animación para quitar el display
     }
-});
-
-// Animación inicial de entrada
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    card.classList.add("show");
-  }, 500);
 });
 
 // ENVÍO DEL FORMULARIO
