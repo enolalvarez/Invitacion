@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmación de Asistencia</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FONDO */
+.background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486') no-repeat center center/cover;
+}
+
+/* OVERLAY */
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+}
+
+/* CONTENEDOR */
+.container {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  max-width: 500px;
+}
+
+/* TARJETA */
+.card {
+  background: rgba(255,255,255,0.95);
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* MENSAJE FINAL */
+.final-message {
+  display: none;
+  background: rgba(255,255,255,0.95);
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+/* TIPOGRAFÍA */
+h1 {
+  font-family: 'Playfair Display', serif;
+  color: #1F2A44;
+  font-size: 2.5em;
+}
+
+.date {
+  color: #D4AF37;
+  margin: 10px 0 20px;
+}
+
+p {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+h2 {
+  margin: 20px 0;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+}
+
+/* FORMULARIO */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-bottom: 1px solid #D4AF37;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #1F2A44;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #D4AF37;
+  color: #1F2A44;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="overlay"></div>
+
+<div class="container">
+
+  <div class="card" id="card">
+
+    <h1>Enol & Lucía</h1>
+    <div class="date">5 de Septiembre de 2026</div>
+
+    <p>Nos complace invitarte a celebrar nuestro enlace.</p>
+    <p>Será un honor contar contigo en este día tan especial.</p>
+
+    <h2>Confirmación de asistencia</h2>
+
+    <!-- FORMULARIO ORIGINAL FUNCIONAL -->
+ <form id="weddingForm">
+      <input type="text" name="nombre" placeholder="Nombre completo" required>
+      <input type="text" name="dieta" placeholder="Restricciones alimentarias">
+      <select name="asistencia" required>
+        <option value="">¿Asistirás?</option>
+        <option value="Sí">Sí, asistiré</option>
+        <option value="No">No podré asistir</option>
+      </select>
+      <button type="submit" id="submitBtn">Confirmar asistencia</button>
+    </form>
+  </div> <div class="final-message" id="thanksMessage" style="display:none;">
+    <h1>¡Gracias! 💍</h1>
+    <p>Tu respuesta ha sido enviada correctamente.</p>
+    <p>Nos hace mucha ilusión compartir este día contigo.</p>
+  </div>
+</div> <script>
+// --- CONFIGURACIÓN ---
+// REEMPLAZA ESTA URL POR LA TUYA (La que termina en /exec)
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxuCFwv0iPwHWVdJUQ0f2njOu0vdciNB5x9Q3uiaCVkJRgStUOUEXGxYfvd_5mudXHU/exec'; 
+
+const form = document.getElementById('weddingForm');
+const card = document.getElementById('card');
+const thanks = document.getElementById('thanksMessage');
+const btn = document.getElementById('submitBtn');
+
+// Animación inicial de entrada (Fade-in)
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    card.classList.add("show");
+  }, 800);
+});
+
+// ENVÍO DEL FORMULARIO SIN RECARGAR PÁGINA
+form.addEventListener('submit', e => {
+  e.preventDefault(); 
+  
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
+
+  fetch(scriptURL, { 
+    method: 'POST', 
+    body: new FormData(form),
+    mode: 'no-cors' 
+  })
+  .then(() => {
+    // Al completarse: Lanzar confeti y cambiar vista
+    lanzarConfeti();
+    card.style.display = 'none';
+    thanks.style.display = 'block';
+  })
+  .catch(error => {
+    console.error('Error!', error.message);
+    alert("Hubo un error. Revisa tu conexión e inténtalo de nuevo.");
+    btn.disabled = false;
+    btn.innerText = "Confirmar asistencia";
+  });
+});
+
+// FUNCIÓN DE CONFETI DORADO
+function lanzarConfeti() {
+  const duration = 3 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({
+      particleCount: 3,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+      colors: ['#D4AF37', '#F7E7CE']
+    });
+    confetti({
+      particleCount: 3,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+      colors: ['#D4AF37', '#F7E7CE']
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+}
+
+// CARGA DE LIBRERÍA DE CONFETI EXTERNA
+(function() {
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+  document.body.appendChild(s);
+})();
+</script>
+
+</body>
+</html>
