@@ -8,11 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -20,97 +16,57 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* IMPORTANTE: Permitir que el cuerpo crezca si el contenido lo necesita */
   height: auto; 
 }
 
-/* FONDO CORREGIDO */
 .background {
-  position: fixed; /* Mantiene el fondo quieto al hacer scroll */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Ancho completo de la ventana */
-  height: 100vh; /* Alto completo de la ventana */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486') no-repeat center center;
-  background-size: cover; /* Clave: La imagen siempre cubre todo el espacio disponible */
-  z-index: -2; /* Se asegura de estar detrás de todo */
+  background-size: cover;
+  z-index: -2;
 }
 
-/* OVERLAY */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.45);
   z-index: -1;
 }
 
-/* CONTENEDOR */
 .container {
   position: relative;
   width: 90%;
   max-width: 500px;
-  /* Añadir margen vertical para que no se pegue a los bordes al crecer */
   margin: 40px auto; 
   z-index: 1;
 }
 
-/* TARJETA */
+/* TARJETA SIEMPRE VISIBLE */
 .card {
   background: rgba(255,255,255,0.95);
   padding: 40px;
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 1s ease;
+  /* Eliminadas las opacidades para que se vea siempre */
 }
 
-.card.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* MENSAJE FINAL */
 .final-message {
   display: none;
   background: rgba(255,255,255,0.95);
   padding: 40px;
   border-radius: 16px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
-/* TIPOGRAFÍA */
-h1 {
-  font-family: 'Playfair Display', serif;
-  color: #1F2A44;
-  font-size: 2.2em;
-}
+h1 { font-family: 'Playfair Display', serif; color: #1F2A44; font-size: 2.2em; }
+.date { color: #D4AF37; margin: 10px 0 20px; font-weight: 600; letter-spacing: 1px; }
+p { margin-bottom: 10px; color: #333; }
+h2 { margin: 20px 0; color: #D4AF37; font-family: 'Playfair Display', serif; font-size: 1.5em; }
 
-.date {
-  color: #D4AF37;
-  margin: 10px 0 20px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-p {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-h2 {
-  margin: 20px 0;
-  color: #D4AF37;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5em;
-}
-
-/* FORMULARIO */
 input, select {
   width: 100%;
   padding: 12px;
@@ -122,47 +78,17 @@ input, select {
   font-size: 16px; 
 }
 
-input:focus, select:focus {
-  outline: none;
-  border-bottom: 2px solid #D4AF37;
-}
+input:focus, select:focus { outline: none; border-bottom: 2px solid #D4AF37; }
 
-/* SECCIÓN CONDICIONAL (OCULTA POR DEFECTO) */
+/* CONTENEDOR DE CAMPOS EXTRA (TRANSICIÓN SUAVE) */
 #extraFields {
-  display: none;
+  max-height: 0;
+  opacity: 0;
   overflow: hidden;
-  transition: all 0.5s ease;
+  transition: all 0.6s ease; /* Aquí ocurre la magia */
   background: rgba(212, 175, 55, 0.05);
-  padding: 0 15px;
   border-radius: 8px;
-  margin-top: 10px;
 }
-
-button {
-  margin-top: 25px;
-  padding: 14px 40px;
-  background: #1F2A44;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-button:hover {
-  background: #D4AF37;
-  color: #1F2A44;
-  transform: scale(1.05);
-}
-
-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
 </style>
 </head>
 
@@ -172,11 +98,9 @@ button:disabled {
 <div class="overlay"></div>
 
 <div class="container">
-
   <div class="card" id="card">
     <h1>Enol & Lucía</h1>
     <div class="date">5 DE SEPTIEMBRE DE 2026</div>
-
     <p>Nos complace invitarte a celebrar nuestro enlace.</p>
     <p>Será un honor contar contigo en este día tan especial.</p>
 
@@ -192,116 +116,74 @@ button:disabled {
       </select>
 
       <div id="extraFields">
-        <input type="number" name="acompanantes" placeholder="Número de acompañantes" min="0" max="10">
-        <input type="text" name="alergias" placeholder="Alergias o restricciones alimentarias">
+        <div style="padding: 10px 15px;"> <input type="number" name="acompanantes" placeholder="Número de acompañantes" min="0">
+          <input type="text" name="alergias" placeholder="Alergias o restricciones">
+        </div>
       </div>
 
-      <button type="submit" id="submitBtn">Enviar confirmación</button>
+      <button type="submit" id="submitBtn" style="margin-top:25px; padding:14px 40px; background:#1F2A44; color:white; border:none; border-radius:30px; cursor:pointer; font-weight:600; text-transform:uppercase;">
+        Enviar confirmación
+      </button>
     </form>
   </div>
 
- <div class="final-message" id="thanksMessage">
+  <div class="final-message" id="thanksMessage">
     <h1>¡Gracias, <span id="userNameDisplay"></span>! 💍</h1>
     <p>Tu respuesta ha sido enviada correctamente.</p>
-    <p>Nos hace mucha ilusión compartir este día contigo.</p>
-</div>
-
+  </div>
 </div>
 
 <script>
-// --- CONFIGURACIÓN ---
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxUaGCjMAT7BlASarfIJsXGG4XnBrs74AKzMF79bW4nCPwobpkVttwMaJ20VAV9F5TW/exec'; 
-
 const form = document.getElementById('weddingForm');
-const card = document.getElementById('card');
-const thanks = document.getElementById('thanksMessage');
-const btn = document.getElementById('submitBtn');
 const asistenciaSelect = document.getElementById('asistenciaSelect');
 const extraFields = document.getElementById('extraFields');
 
-// Lógica para mostrar/ocultar campos con transición suave
+// LÓGICA DE TRANSICIÓN SUAVE
 asistenciaSelect.addEventListener('change', function() {
     if (this.value === 'Sí') {
-        // Primero lo ponemos en block pero invisible y sin altura
-        extraFields.style.display = 'block';
-        extraFields.style.maxHeight = '0px';
-        extraFields.style.opacity = '0';
-        extraFields.style.transition = 'all 0.6s ease'; // Aquí controlas la velocidad (0.6 segundos)
-        
-        // Un pequeño retraso para que el navegador note el cambio y anime
-        setTimeout(() => {
-            extraFields.style.maxHeight = '200px'; // Altura suficiente para los campos
-            extraFields.style.opacity = '1';
-        }, 10);
+        extraFields.style.maxHeight = '300px'; // Altura suficiente
+        extraFields.style.opacity = '1';
+        extraFields.style.marginTop = '10px';
     } else {
-        // Cuando eligen "No", lo ocultamos
-        extraFields.style.maxHeight = '0px';
+        extraFields.style.maxHeight = '0';
         extraFields.style.opacity = '0';
-        setTimeout(() => {
-            extraFields.style.display = 'none';
-        }, 600); // Espera a que termine la animación para quitar el display
+        extraFields.style.marginTop = '0';
     }
 });
 
-// ENVÍO DEL FORMULARIO
 form.addEventListener('submit', e => {
-  e.preventDefault(); 
-  
-  // --- NUEVA LÓGICA PARA EL NOMBRE ---
+  e.preventDefault();
   const nombreCompleto = form.nombre.value.trim();
-  const primerNombre = nombreCompleto.split(' ')[0]; // Coge solo la primera palabra
-  document.getElementById('userNameDisplay').innerText = primerNombre;
-  // ------------------------------------
-
+  document.getElementById('userNameDisplay').innerText = nombreCompleto.split(' ')[0];
+  
+  const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerText = "Enviando...";
 
-  fetch(scriptURL, { 
-    method: 'POST', 
-    body: new FormData(form),
-    mode: 'no-cors' 
-  })
+  fetch(scriptURL, { method: 'POST', body: new FormData(form), mode: 'no-cors' })
   .then(() => {
-    lanzarConfeti();
-    card.style.display = 'none';
-    thanks.style.display = 'block';
+    if(typeof confetti === 'function') lanzarConfeti();
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('thanksMessage').style.display = 'block';
   })
   .catch(error => {
-    console.error('Error!', error.message);
-    alert("Hubo un error al enviar. Por favor, inténtalo de nuevo.");
+    alert("Error al enviar. Inténtalo de nuevo.");
     btn.disabled = false;
     btn.innerText = "Enviar confirmación";
   });
 });
 
-// FUNCIÓN DE CONFETI
 function lanzarConfeti() {
-  const duration = 4 * 1000;
+  const duration = 3000;
   const end = Date.now() + duration;
-
   (function frame() {
-    confetti({
-      particleCount: 4,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0, y: 0.6 },
-      colors: ['#D4AF37', '#F7E7CE', '#1F2A44']
-    });
-    confetti({
-      particleCount: 4,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1, y: 0.6 },
-      colors: ['#D4AF37', '#F7E7CE', '#1F2A44']
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
+    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ['#D4AF37', '#1F2A44'] });
+    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: ['#D4AF37', '#1F2A44'] });
+    if (Date.now() < end) requestAnimationFrame(frame);
   }());
 }
 
-// Carga de librería de confeti
 (function() {
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
