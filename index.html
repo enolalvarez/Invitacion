@@ -241,6 +241,12 @@ window.addEventListener("load", () => {
 form.addEventListener('submit', e => {
   e.preventDefault(); 
   
+  // --- NUEVA LÓGICA PARA EL NOMBRE ---
+  const nombreCompleto = form.nombre.value.trim();
+  const primerNombre = nombreCompleto.split(' ')[0]; // Coge solo la primera palabra
+  document.getElementById('userNameDisplay').innerText = primerNombre;
+  // ------------------------------------
+
   btn.disabled = true;
   btn.innerText = "Enviando...";
 
