@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confirmación de Asistencia</title>
+<title>Confirmación de Asistencia - Enol & Lucía</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
-
 * {
   margin: 0;
   padding: 0;
@@ -21,30 +20,41 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* IMPORTANTE: Permitir que el cuerpo crezca si el contenido lo necesita */
+  height: auto; 
 }
 
-/* FONDO */
+/* FONDO CORREGIDO */
 .background {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486') no-repeat center center/cover;
+  position: fixed; /* Mantiene el fondo quieto al hacer scroll */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Ancho completo de la ventana */
+  height: 100vh; /* Alto completo de la ventana */
+  background: url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486') no-repeat center center;
+  background-size: cover; /* Clave: La imagen siempre cubre todo el espacio disponible */
+  z-index: -2; /* Se asegura de estar detrás de todo */
 }
 
 /* OVERLAY */
 .overlay {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0,0,0,0.45);
+  z-index: -1;
 }
 
 /* CONTENEDOR */
 .container {
   position: relative;
-  z-index: 1;
   width: 90%;
   max-width: 500px;
+  /* Añadir margen vertical para que no se pegue a los bordes al crecer */
+  margin: 40px auto; 
+  z-index: 1;
 }
 
 /* TARJETA */
@@ -54,7 +64,6 @@ body {
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-
   opacity: 0;
   transform: translateY(30px);
   transition: all 1s ease;
@@ -69,8 +78,8 @@ body {
 .final-message {
   display: none;
   background: rgba(255,255,255,0.95);
-  padding: 30px;
-  border-radius: 14px;
+  padding: 40px;
+  border-radius: 16px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
@@ -79,12 +88,14 @@ body {
 h1 {
   font-family: 'Playfair Display', serif;
   color: #1F2A44;
-  font-size: 2.5em;
+  font-size: 2.2em;
 }
 
 .date {
   color: #D4AF37;
   margin: 10px 0 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 p {
@@ -96,6 +107,7 @@ h2 {
   margin: 20px 0;
   color: #D4AF37;
   font-family: 'Playfair Display', serif;
+  font-size: 1.5em;
 }
 
 /* FORMULARIO */
@@ -106,27 +118,49 @@ input, select {
   border: none;
   border-bottom: 1px solid #ccc;
   background: transparent;
+  font-family: inherit;
+  font-size: 16px; 
 }
 
 input:focus, select:focus {
   outline: none;
-  border-bottom: 1px solid #D4AF37;
+  border-bottom: 2px solid #D4AF37;
+}
+
+/* SECCIÓN CONDICIONAL (OCULTA POR DEFECTO) */
+#extraFields {
+  display: none;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  background: rgba(212, 175, 55, 0.05);
+  padding: 0 15px;
+  border-radius: 8px;
+  margin-top: 10px;
 }
 
 button {
-  margin-top: 20px;
-  padding: 12px 30px;
+  margin-top: 25px;
+  padding: 14px 40px;
   background: #1F2A44;
   color: white;
   border: none;
   border-radius: 30px;
   cursor: pointer;
   transition: 0.3s;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 button:hover {
   background: #D4AF37;
   color: #1F2A44;
+  transform: scale(1.05);
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 </style>
@@ -140,49 +174,70 @@ button:hover {
 <div class="container">
 
   <div class="card" id="card">
-
     <h1>Enol & Lucía</h1>
-    <div class="date">5 de Septiembre de 2026</div>
+    <div class="date">5 DE SEPTIEMBRE DE 2026</div>
 
     <p>Nos complace invitarte a celebrar nuestro enlace.</p>
     <p>Será un honor contar contigo en este día tan especial.</p>
 
-    <h2>Confirmación de asistencia</h2>
+    <h2>Confirmación</h2>
 
-    <!-- FORMULARIO ORIGINAL FUNCIONAL -->
- <form id="weddingForm">
+    <form id="weddingForm">
       <input type="text" name="nombre" placeholder="Nombre completo" required>
-      <input type="text" name="dieta" placeholder="Restricciones alimentarias">
-      <select name="asistencia" required>
-        <option value="">¿Asistirás?</option>
+
+      <select name="asistencia" id="asistenciaSelect" required>
+        <option value="" disabled selected>¿Asistirás?</option>
         <option value="Sí">Sí, asistiré</option>
         <option value="No">No podré asistir</option>
       </select>
-      <button type="submit" id="submitBtn">Confirmar asistencia</button>
+
+      <div id="extraFields">
+        <input type="number" name="acompanantes" placeholder="Número de acompañantes" min="0" max="10">
+        <input type="text" name="alergias" placeholder="Alergias o restricciones alimentarias">
+      </div>
+
+      <button type="submit" id="submitBtn">Enviar confirmación</button>
     </form>
-  </div> <div class="final-message" id="thanksMessage" style="display:none;">
+  </div>
+
+  <div class="final-message" id="thanksMessage">
     <h1>¡Gracias! 💍</h1>
     <p>Tu respuesta ha sido enviada correctamente.</p>
     <p>Nos hace mucha ilusión compartir este día contigo.</p>
   </div>
-</div> <script>
+
+</div>
+
+<script>
 // --- CONFIGURACIÓN ---
-// REEMPLAZA ESTA URL POR LA TUYA (La que termina en /exec)
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxuCFwv0iPwHWVdJUQ0f2njOu0vdciNB5x9Q3uiaCVkJRgStUOUEXGxYfvd_5mudXHU/exec'; 
 
 const form = document.getElementById('weddingForm');
 const card = document.getElementById('card');
 const thanks = document.getElementById('thanksMessage');
 const btn = document.getElementById('submitBtn');
+const asistenciaSelect = document.getElementById('asistenciaSelect');
+const extraFields = document.getElementById('extraFields');
 
-// Animación inicial de entrada (Fade-in)
+// Lógica para mostrar/ocultar campos extras
+asistenciaSelect.addEventListener('change', function() {
+    if (this.value === 'Sí') {
+        extraFields.style.display = 'block';
+    } else {
+        extraFields.style.display = 'none';
+        // Opcional: limpiar los campos si elige "No" después de haber puesto algo
+        extraFields.querySelectorAll('input').forEach(input => input.value = '');
+    }
+});
+
+// Animación inicial de entrada
 window.addEventListener("load", () => {
   setTimeout(() => {
     card.classList.add("show");
-  }, 800);
+  }, 500);
 });
 
-// ENVÍO DEL FORMULARIO SIN RECARGAR PÁGINA
+// ENVÍO DEL FORMULARIO
 form.addEventListener('submit', e => {
   e.preventDefault(); 
   
@@ -195,38 +250,37 @@ form.addEventListener('submit', e => {
     mode: 'no-cors' 
   })
   .then(() => {
-    // Al completarse: Lanzar confeti y cambiar vista
     lanzarConfeti();
     card.style.display = 'none';
     thanks.style.display = 'block';
   })
   .catch(error => {
     console.error('Error!', error.message);
-    alert("Hubo un error. Revisa tu conexión e inténtalo de nuevo.");
+    alert("Hubo un error al enviar. Por favor, inténtalo de nuevo.");
     btn.disabled = false;
-    btn.innerText = "Confirmar asistencia";
+    btn.innerText = "Enviar confirmación";
   });
 });
 
-// FUNCIÓN DE CONFETI DORADO
+// FUNCIÓN DE CONFETI
 function lanzarConfeti() {
-  const duration = 3 * 1000;
+  const duration = 4 * 1000;
   const end = Date.now() + duration;
 
   (function frame() {
     confetti({
-      particleCount: 3,
+      particleCount: 4,
       angle: 60,
       spread: 55,
-      origin: { x: 0 },
-      colors: ['#D4AF37', '#F7E7CE']
+      origin: { x: 0, y: 0.6 },
+      colors: ['#D4AF37', '#F7E7CE', '#1F2A44']
     });
     confetti({
-      particleCount: 3,
+      particleCount: 4,
       angle: 120,
       spread: 55,
-      origin: { x: 1 },
-      colors: ['#D4AF37', '#F7E7CE']
+      origin: { x: 1, y: 0.6 },
+      colors: ['#D4AF37', '#F7E7CE', '#1F2A44']
     });
 
     if (Date.now() < end) {
@@ -235,7 +289,7 @@ function lanzarConfeti() {
   }());
 }
 
-// CARGA DE LIBRERÍA DE CONFETI EXTERNA
+// Carga de librería de confeti
 (function() {
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
