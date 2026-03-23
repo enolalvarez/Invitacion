@@ -44,14 +44,12 @@ body {
   z-index: 1;
 }
 
-/* TARJETA SIEMPRE VISIBLE */
 .card {
   background: rgba(255,255,255,0.95);
   padding: 40px;
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-  /* Eliminadas las opacidades para que se vea siempre */
 }
 
 .final-message {
@@ -60,6 +58,7 @@ body {
   padding: 40px;
   border-radius: 16px;
   text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
 h1 { font-family: 'Playfair Display', serif; color: #1F2A44; font-size: 2.2em; }
@@ -80,12 +79,11 @@ input, select {
 
 input:focus, select:focus { outline: none; border-bottom: 2px solid #D4AF37; }
 
-/* CONTENEDOR DE CAMPOS EXTRA (TRANSICIÓN SUAVE) */
 #extraFields {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: all 0.6s ease; /* Aquí ocurre la magia */
+  transition: all 0.6s ease;
   background: rgba(212, 175, 55, 0.05);
   border-radius: 8px;
 }
@@ -116,7 +114,8 @@ input:focus, select:focus { outline: none; border-bottom: 2px solid #D4AF37; }
       </select>
 
       <div id="extraFields">
-        <div style="padding: 10px 15px;"> <input type="number" name="acompanantes" placeholder="Número de acompañantes" min="0">
+        <div style="padding: 10px 15px;"> 
+          <input type="number" name="acompanantes" placeholder="Número de acompañantes" min="0">
           <input type="text" name="alergias" placeholder="Alergias o restricciones">
         </div>
       </div>
@@ -139,18 +138,22 @@ input:focus, select:focus { outline: none; border-bottom: 2px solid #D4AF37; }
         <p>Sentimos mucho que no puedas acompañarnos.</p>
         <p>Te echaremos de menos, pero gracias por avisarnos.</p>
     </div>
+  </div>
 </div>
 
 <script>
+// --- ELEMENTOS ---
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxUaGCjMAT7BlASarfIJsXGG4XnBrs74AKzMF79bW4nCPwobpkVttwMaJ20VAV9F5TW/exec'; 
 const form = document.getElementById('weddingForm');
+const card = document.getElementById('card');
+const thanks = document.getElementById('thanksMessage');
 const asistenciaSelect = document.getElementById('asistenciaSelect');
 const extraFields = document.getElementById('extraFields');
 
-// LÓGICA DE TRANSICIÓN SUAVE
+// TRANSICIÓN DE CAMPOS EXTRA
 asistenciaSelect.addEventListener('change', function() {
     if (this.value === 'Sí') {
-        extraFields.style.maxHeight = '300px'; // Altura suficiente
+        extraFields.style.maxHeight = '300px';
         extraFields.style.opacity = '1';
         extraFields.style.marginTop = '10px';
     } else {
@@ -160,16 +163,13 @@ asistenciaSelect.addEventListener('change', function() {
     }
 });
 
+// ENVÍO DEL FORMULARIO
 form.addEventListener('submit', e => {
   e.preventDefault();
   
   const nombreCompleto = form.nombre.value.trim();
   const primerNombre = nombreCompleto.split(' ')[0];
-  const asistencia = asistenciaSelect.value; // Guardamos si dijo Sí o No
-
-  // Preparamos los textos antes de enviar
-  document.getElementById('userNameDisplaySi').innerText = primerNombre;
-  document.getElementById('userNameDisplayNo').innerText = primerNombre;
+  const asistencia = asistenciaSelect.value;
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -177,20 +177,23 @@ form.addEventListener('submit', e => {
 
   fetch(scriptURL, { method: 'POST', body: new FormData(form), mode: 'no-cors' })
   .then(() => {
+    // 1. Ocultar tarjeta y mostrar contenedor de gracias
     card.style.display = 'none';
     thanks.style.display = 'block';
 
-    // Lógica para mostrar un mensaje u otro
+    // 2. Personalizar el mensaje según la respuesta
     if (asistencia === 'Sí') {
+        document.getElementById('userNameDisplaySi').innerText = primerNombre;
         document.getElementById('msgSi').style.display = 'block';
-        if(typeof confetti === 'function') lanzarConfeti(); // Solo confeti si viene
+        if(typeof confetti === 'function') lanzarConfeti();
     } else {
+        document.getElementById('userNameDisplayNo').innerText = primerNombre;
         document.getElementById('msgNo').style.display = 'block';
-        // Aquí no lanzamos confeti porque sería un poco raro celebrar que no viene, ¿no? :)
     }
   })
   .catch(error => {
-    alert("Error al enviar. Inténtalo de nuevo.");
+    console.error('Error!', error.message);
+    alert("Hubo un error al enviar. Por favor, inténtalo de nuevo.");
     btn.disabled = false;
     btn.innerText = "Enviar confirmación";
   });
@@ -206,6 +209,7 @@ function lanzarConfeti() {
   }());
 }
 
+// Carga de confetti
 (function() {
   const s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
